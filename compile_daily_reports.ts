@@ -2,10 +2,9 @@ import fs from "fs-extra";
 import parse from "csv-parse";
 import glob from "glob";
 import path from "path";
-import moment from "moment";
 import stringify from "csv-stringify";
 
-const START_CONFIRMED_COUNT = 50;
+const START_CONFIRMED_COUNT = 25;
 const datafolder = "COVID-19/csse_covid_19_data/csse_covid_19_daily_reports";
 const folder = path.join(__dirname, datafolder);
 const COLUMNS = {
@@ -55,18 +54,6 @@ const compile = async () => {
 
     // Already create our output file, so that we can write to it anytime.
     const ws = fs.createWriteStream(path.join(__dirname, "out", "output.csv"));
-    // stringifier.on("readable", () => {
-    //     const line = stringifier.read() as string;
-    //     console.log("Writing: " + typeof line);
-    //     ws.write(line);
-    // });
-    // stringifier.on("error", err => {
-    //     console.error(err.message);
-    // });
-    // stringifier.on("finish", () => {
-    //     ws.end();
-    //     console.log("Done writing to output file.");
-    // });
 
     // Process the data into our table
     let currentDay = 0;
@@ -84,31 +71,28 @@ const compile = async () => {
         }
     }
 
-    console.log("Processed " + currentDay + " days of data");
+    console.log("Processed " + currentDay + " days of data.");
 
     // Write header
-    const countries = Object.keys(myData).sort();
-    // stringifier.write(countries);
+    const countries = Object.keys(population).sort();
     ws.write(countries.join(";") + "\n");
 
     for (let i = 0; i < currentDay; i += 1) {
         const row: (string | number)[] = [];
         var hasData = false;
         for (const countryName of countries) {
-            if (myData[countryName][i]) hasData = true;
-            const dayRatio = myData[countryName][i]
-                ? myData[countryName][i].ratio
-                : "";
+            if (myData[countryName] && myData[countryName][i]) hasData = true;
+            const dayRatio =
+                myData[countryName] && myData[countryName][i]
+                    ? myData[countryName][i].ratio
+                    : "";
             row.push(dayRatio);
         }
         if (!hasData)
             console.warn("Row " + (i + 1) + " doesn't have any data.");
-        // stringifier.write(row);
-
         ws.write(row.join(";") + "\n");
     }
     ws.close();
-    // stringifier.end();
 
     console.log("Demographic data was unavailable for:");
     console.log(unknownCountries);
@@ -151,7 +135,6 @@ const loadPopulation = async () => {
     return new Promise((resolve, reject) => {
         const parser = parse(content, {}, () => resolve());
         parser.on("data", chunck => {
-            //   console.log(JSON.stringify(chunck));
             const country = countryRemapper[chunck[0]];
             if (!country) {
                 unknownCountries[chunck[0]] = true;
