@@ -1,0 +1,16 @@
+{
+  "name": "covid19-nathan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Nathan Vogel",
+  "license": "MIT",
+  "dependencies": {
+    "@types/fs-extra": "^8.1.0",
+    "@types/glob": "^7.1.1",
+    "@types/node": "^13.9.3",
+    "csv": "^5.3.2",
+    "fs-extra": "^9.0.0",
+    "glob": "^7.1.6",
+    "moment": "^2.24.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "outDir": ".",
+    "sourceMap": true,
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "esModuleInterop": true
+  },
+  "files": ["compile_daily_reports.ts"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
